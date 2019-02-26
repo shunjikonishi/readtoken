@@ -8,13 +8,19 @@ class ReadToken {
     this.stream = stream;
     options = options || {};
 
+
     this.emitter = new EventEmitter();
-    this.buf = "";
     this.sep = options.sep || " \t\r\n";
     this.maxLength = options.maxLength || 0;
+    this.readSize = options.readSize || 8192;
+    this.buf = "";
 
     stream.on("readable", this.doRead.bind(this));
     stream.on("end", () => {
+      if (this.buf.length > 0) {
+        this.emitter.emit("token", this.buf);
+        this.buf = "";
+      }
       this.emitter.emit("close");
     });
   }
@@ -28,26 +34,31 @@ class ReadToken {
   }
 
   doRead() {
-    var c = this.stream.read(1);
-    while(c) {
-      if (this.sep.indexOf(c) === -1) {
-        this.buf += c;
-        if (this.maxLength && this.buf.length >= this.maxLength) {
-          this.doEmitToken();
-        }
-      } else if (this.buf.length > 0) {
-        this.doEmitToken();
+    let str = this.stream.read(this.readSize);
+    while(str) {
+      if (this.buf) {
+        str = this.buf + str;
+        this.buf = "";
       }
-      c = this.stream.read(1);
+      let spos = 0;
+      let index = 0;
+      while (index < str.length) {
+        const c = str.charAt(index++);
+        if (this.sep.indexOf(c) !== -1) {
+          if (spos < index - 1) {
+            this.emitter.emit("token", str.substring(spos, index - 1));
+          }
+          spos = index;
+        } else if (this.maxLength > 0 && index - spos > this.maxLength) {
+          this.emitter.emit("token", str.substring(spos, index - 1));
+          spos = index - 1;
+        }
+      }
+      if (spos < index) {
+        this.buf = str.substring(spos);
+      }
+      str = this.stream.read(this.readSize);
     }
-    if (this.buf.length > 0) {
-      this.doEmitToken();
-    }
-  }
-
-  doEmitToken() {
-    this.emitter.emit("token", this.buf);
-    this.buf = "";
   }
 }
 
