@@ -1,0 +1,31 @@
+{
+  "name": "readtoken",
+  "version": "0.0.1",
+  "description": "Read file token by token",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shunjikonishi/readtoken.git"
+  },
+  "keywords": [
+    "nodejs",
+    "file",
+    "read",
+    "token"
+  ],
+  "author": "Shunji Konishi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shunjikonishi/readtoken/issues"
+  },
+  "homepage": "https://github.com/shunjikonishi/readtoken#readme",
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}
