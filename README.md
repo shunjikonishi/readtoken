@@ -46,3 +46,6 @@ readToken.on("close", () => {
 - maxLength: number
   - The max length of each tokens. If token in file is longer than this value, it will be sliced by this number.
   - default: 0. 0 means it doesn't have maxLength.
+- readSize: number
+  - read buffer size
+  - default: 8192
