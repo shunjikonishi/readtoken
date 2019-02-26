@@ -33,6 +33,14 @@ class ReadToken {
     this.emitter.off(name, func);
   }
 
+  close() {
+    try {
+      this.stream.close();
+    } catch (e) {
+      // Ignore errors
+    }
+  }
+
   doRead() {
     let str = this.stream.read(this.readSize);
     while(str) {
